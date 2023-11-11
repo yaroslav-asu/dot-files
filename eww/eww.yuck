@@ -1,0 +1,120 @@
+(deflisten volume :initial "0"
+"scripts/volume.sh")
+
+(defwidget bar []
+  (centerbox 
+    :orientation "h"
+    :class "bar"
+    (workspaces)
+    (time)
+    (sidestuff)
+   )
+)
+
+(defwidget tray []
+    (box 
+        (systray :icon-size 20)
+    )
+)
+
+(defwidget time []
+ (box 
+    :class "time centerbox_element" 
+    :orientation "v" 
+    :space-evenly false 
+    :halign "center"
+
+    time
+    date
+))
+
+(defwidget sidestuff []
+  (box :class "sidestuff centerbox_element" :orientation "h" :space-evenly false :halign "end"
+    (volume)
+    (bat)
+    (tray)
+))
+
+(deflisten pacman :initial "active" "./scripts/pacman.sh")
+
+(deflisten workspaces :initial "[]" "bash ~/.config/eww/scripts/get-workspaces")
+
+(deflisten current_workspace :initial "1" "bash ~/.config/eww/scripts/get-active-workspace")
+
+(defwidget workspaces []
+    (box :class "workspaces centerbox_element" :space-evenly false :orientation "h" :halign "start"
+        (label :text "${workspaces}${current_workspace}" :visible false)
+        (for workspace in workspaces
+            (eventbox :onclick "hyprctl dispatch workspace ${workspace.id}"
+                (box :class "workspace-entry ${workspace.id == current_workspace ? "current" : workspace.windows > 0 ? "occupied" : "empty"}"
+                    (label :text "${pacman == "active" ? "󰮯 " : "⬤ "}" :class "pacman--${pacman}" :visible "${workspace.id == current_workspace}")
+                    (label :text "${workspace.windows > 0 ? "● ": "󰊠 "}" :visible "${workspace.id != current_workspace}")
+                )
+            )
+        )
+    )
+)
+
+
+(defwidget volume []
+    (box :orientation "h"  
+        (button 
+            :onclick "./scripts/change-volume.sh ${volume}"
+            :class "volume"
+            :size 10
+
+            (label 
+                :class 'volume-icon ${volume == "muted" ? "less" : volume < 5 ? "less" : "more"}' 
+                :halign "start"
+                :text {volume == "muted" ? "󰸈" : volume < 33 ? "" : volume < 67 ? "" : ""}
+                :tooltip "Volume: ${volume}%"
+            )
+        ) 
+    )  
+)
+
+(defwidget wifi []
+	(box		:orientation "v"  
+				:tooltip wifi-name
+	(button		:onclick "scripts/popup wifi" 
+				:class "wifi-icon" wifi-icon)))
+(defpoll wifi-icon :interval "1s" "scripts/wifi icon")
+(defpoll wifi-name :interval "1s" "scripts/wifi name")
+
+(defpoll battery			:interval "1s"	"scripts/battery icon")
+
+(defpoll battery-cappacity	:interval "1s"	"scripts/battery percent")
+
+(defwidget bat []
+	(box :space-evenly "false"
+	    (label	:class "bat"		
+			:halign "end"		
+			:text battery	
+			:tooltip "Battery: ${battery-cappacity}%"
+        )
+    )
+)
+
+
+(defpoll time 
+    :interval "10s"
+    "date '+%H:%M'"
+)
+
+(defpoll date 
+    :interval "10m"
+    "date '+%d.%m.%Y'"
+)
+
+(defwindow bar
+      :class "bar"
+      :monitor 0
+      :windowtype "dock"
+      :exclusive true
+      :geometry (geometry :x "0%"
+                      :y "0%"
+                      :width "100%"
+                      :height "30px"
+                      :anchor "top center")
+  (bar)
+)

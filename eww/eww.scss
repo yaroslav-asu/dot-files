@@ -1,0 +1,52 @@
+*{
+    font-family: JetBrainsMono;
+    font-weight: 600;
+}
+.centerbox_element{
+    background: rgba(0, 0, 0, 0.4);
+    padding: 3px 15px;
+    border-radius: 20px;
+}
+
+.bar{
+    background:transparent;
+    padding: 5px 20px;
+}
+
+.time{
+    font-size: 13px;
+}
+
+.volume{
+    background: transparent;
+    font-size: 22px;
+    border: none;
+}
+
+.colse{
+    font-size: 12px;
+    color: red;
+}
+
+.pacman--inactive{
+    font-size: 15.5px;
+}
+
+.workspaces{
+    font-size: 20px;
+
+
+    .current{
+        color: #EFCB68;
+    }
+
+    .occupied{
+        color: #89D2DC;
+    }
+
+    .empty{
+        //color: #8783D1;
+        //color: #FFB7FF;
+        color: #FFB8D1;
+    }
+}
